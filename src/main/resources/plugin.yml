@@ -1,0 +1,26 @@
+name: zPayments
+version: '1.0.0'
+main: it.gromov.zpayments.ZPaymentsPlugin
+author: gromov
+website: 'https://zdonate.me'
+# Специально без api-version — плагин собран только на публичном Bukkit API
+# (без NMS), поэтому не имеет смысла запирать его в конкретную линейку
+# версий: Paper/Spigot от 1.8 до актуальных загрузят его одинаково.
+commands:
+  zpayments:
+    description: 'Управление плагином zPayments'
+    aliases: [ zp ]
+    permission: zpayments.command.admin
+  cart:
+    description: 'Открыть корзину покупок с сайта'
+    permission: zpayments.command.cart
+permissions:
+  zpayments.command.admin:
+    description: 'Доступ к /zpayments (reload, status, testconnection)'
+    default: op
+  zpayments.command.cart:
+    description: 'Доступ к /cart'
+    default: true
+  zpayments.bypass.cooldown:
+    description: 'Игнорировать кулдаун открытия меню корзины'
+    default: op

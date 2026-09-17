@@ -1,0 +1,17 @@
+# Maven build output
+target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+
+# Логи/рантайм-конфиг реального сервера — здесь их не бывает (Okaeri
+# генерирует их на лету из аннотированных дефолтов), но на всякий случай.
+*.log
+config.yml
+messages.yml
+menu.yml
