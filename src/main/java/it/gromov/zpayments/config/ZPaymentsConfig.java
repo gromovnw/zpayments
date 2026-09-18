@@ -8,6 +8,7 @@ import it.gromov.zpayments.config.section.CartSection;
 import it.gromov.zpayments.config.section.PollingSection;
 import it.gromov.zpayments.config.section.ShopSection;
 import it.gromov.zpayments.config.section.StorageSection;
+import it.gromov.zpayments.config.section.UpdateSection;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,4 +23,5 @@ public final class ZPaymentsConfig extends OkaeriConfig {
     private PollingSection polling = new PollingSection();
     private StorageSection storage = new StorageSection();
     private CartSection cart = new CartSection();
+    private UpdateSection update = new UpdateSection();
 }

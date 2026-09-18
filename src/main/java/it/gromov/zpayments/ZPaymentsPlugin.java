@@ -11,6 +11,7 @@ import it.gromov.zpayments.service.MenuService;
 import it.gromov.zpayments.service.MessageService;
 import it.gromov.zpayments.service.ShopApiService;
 import it.gromov.zpayments.service.StorageService;
+import it.gromov.zpayments.service.UpdateService;
 import it.gromov.zpayments.config.section.StorageType;
 import it.gromov.zpayments.service.impl.CartServiceImpl;
 import it.gromov.zpayments.service.impl.CommandServiceImpl;
@@ -20,6 +21,7 @@ import it.gromov.zpayments.service.impl.MenuServiceImpl;
 import it.gromov.zpayments.service.impl.MessageServiceImpl;
 import it.gromov.zpayments.service.impl.MySqlStorageServiceImpl;
 import it.gromov.zpayments.service.impl.ShopApiServiceImpl;
+import it.gromov.zpayments.service.impl.UpdateServiceImpl;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ZPaymentsPlugin extends JavaPlugin {
@@ -31,6 +33,7 @@ public final class ZPaymentsPlugin extends JavaPlugin {
     private MenuService menuService;
     private ShopApiService shopApiService;
     private CommandService commandService;
+    private UpdateService updateService;
 
     @Override
     public void onEnable() {
@@ -65,6 +68,9 @@ public final class ZPaymentsPlugin extends JavaPlugin {
         commandService = new CommandServiceImpl(this, configService, messageService, cartService, menuService, shopApiService, this::reload);
         commandService.enable();
 
+        updateService = new UpdateServiceImpl(this, configService, getFile());
+        updateService.enable();
+
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, cartService), this);
         getServer().getPluginManager().registerEvents(new MenuClickListener(configService, messageService, cartService), this);
 
@@ -85,6 +91,7 @@ public final class ZPaymentsPlugin extends JavaPlugin {
     public void onDisable() {
         ZPaymentsAPI.shutdown();
 
+        if (updateService != null) updateService.disable();
         if (commandService != null) commandService.disable();
         if (shopApiService != null) shopApiService.disable();
         if (menuService != null) menuService.disable();
