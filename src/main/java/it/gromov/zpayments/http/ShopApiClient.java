@@ -21,7 +21,7 @@ import java.util.List;
 
 public final class ShopApiClient {
 
-    private static final String API_BASE_URL = "https://api.zdonate.me";
+    private static final String API_BASE_URL = "https://zdonate.me";
 
     private final Gson gson = new Gson();
     private final ConfigService configService;
