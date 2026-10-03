@@ -3,6 +3,7 @@ package it.gromov.zpayments;
 import it.gromov.zpayments.api.ZPaymentsAPI;
 import it.gromov.zpayments.http.ShopApiClient;
 import it.gromov.zpayments.listener.MenuClickListener;
+import it.gromov.zpayments.listener.PlayerGroupsListener;
 import it.gromov.zpayments.listener.PlayerJoinListener;
 import it.gromov.zpayments.service.CartService;
 import it.gromov.zpayments.service.CommandService;
@@ -72,6 +73,7 @@ public final class ZPaymentsPlugin extends JavaPlugin {
         updateService.enable();
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, cartService), this);
+        getServer().getPluginManager().registerEvents(new PlayerGroupsListener(this, shopApiClient), this);
         getServer().getPluginManager().registerEvents(new MenuClickListener(configService, messageService, cartService), this);
 
         ZPaymentsAPI.init(cartService);

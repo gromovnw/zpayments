@@ -3,6 +3,8 @@ version: '${project.version}'
 main: it.gromov.zpayments.ZPaymentsPlugin
 author: gromov
 website: 'https://zdonate.me'
+# LuckPerms — необязательный: если он есть, плагин шлёт группы игроков на zDonate (доплата «Умная»).
+softdepend: [ LuckPerms ]
 # Специально без api-version — плагин собран только на публичном Bukkit API
 # (без NMS), поэтому не имеет смысла запирать его в конкретную линейку
 # версий: Paper/Spigot от 1.8 до актуальных загрузят его одинаково.
