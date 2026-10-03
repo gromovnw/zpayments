@@ -5,7 +5,8 @@ import it.gromov.zpayments.config.section.ShopSection;
 import it.gromov.zpayments.http.dto.AckRequestDto;
 import it.gromov.zpayments.http.dto.AckResponseDto;
 import it.gromov.zpayments.http.dto.PendingPurchasesResponse;
-import it.gromov.zpayments.http.dto.PlayerGroupsReportDto;
+import it.gromov.zpayments.http.dto.LookupAnswerDto;
+import it.gromov.zpayments.http.dto.PendingLookupsDto;
 import it.gromov.zpayments.service.ConfigService;
 
 import java.io.BufferedReader;
@@ -41,12 +42,15 @@ public final class ShopApiClient {
         return execute(connection, body, AckResponseDto.class);
     }
 
-    // Группы LuckPerms игрока — нужны только для доплаты «Умная» на zDonate.
-    // Старые версии плагина этот запрос не делают, поэтому API его не требует.
-    public void reportPlayerGroups(String nickname, String uuid, List<String> groups) throws IOException, ShopApiException {
-        HttpURLConnection connection = openConnection("POST", "/api/plugin/players/groups");
+    public PendingLookupsDto fetchPendingLookups() throws IOException, ShopApiException {
+        HttpURLConnection connection = openConnection("GET", "/api/plugin/lookups/pending");
+        return execute(connection, null, PendingLookupsDto.class);
+    }
+
+    public void answerLookup(String lookupId, List<String> groups, String error) throws IOException, ShopApiException {
+        HttpURLConnection connection = openConnection("POST", "/api/plugin/lookups/" + lookupId + "/answer");
         connection.setDoOutput(true);
-        String body = gson.toJson(new PlayerGroupsReportDto(nickname, uuid, groups));
+        String body = gson.toJson(new LookupAnswerDto(groups, error));
         execute(connection, body, Object.class);
     }
 

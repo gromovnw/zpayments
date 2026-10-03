@@ -73,13 +73,6 @@ public final class CartServiceImpl implements CartService {
         boolean shouldQueue = cartEnabled && (!onlyForOffline || !online);
 
         if (shouldQueue) {
-            // process() вызывается из pollNow() — тот крутится на async-таске
-            // (см. ShopApiServiceImpl.enable): callEvent() Paper разрешает
-            // строго из основного потока, иначе IllegalStateException и
-            // покупка вообще не сохраняется/не ставится в очередь. Запись в
-            // storageService — блокирующий I/O (MySQL/файл), поэтому её
-            // оставляем как есть на async, а на main переносим только сам
-            // ивент.
             storageService.addEntry(toEntity(task));
             plugin.getLogger().info("Заказ " + task.getOrderId() + " поставлен в очередь для " + task.getNickname() + " — выполнится при заходе на сервер");
             SchedulerUtil.runOnMain(plugin, () ->

@@ -49,10 +49,6 @@ public final class MySqlStorageServiceImpl implements StorageService {
             tableConfig.setTableName(section.getTablePrefix() + tableConfig.getTableName());
             cartDao = DaoManager.createDao(connectionSource, tableConfig);
             TableUtils.createTableIfNotExists(connectionSource, tableConfig);
-            // JdbcConnectionSource сам по себе соединение не проверяет (оно
-            // ленивое, до первого реального запроса) — без этого countOf()
-            // ошибка URL/пароля/хоста осталась бы незамеченной до первой
-            // покупки. Так падаем сразу при старте, с понятным логом.
             cartDao.countOf();
             ready = true;
             plugin.getLogger().log(Level.INFO, "Подключение к MySQL установлено: " + section.getHost() + ":" + section.getPort() + "/" + section.getDatabase());

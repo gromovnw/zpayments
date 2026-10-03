@@ -33,11 +33,6 @@ public final class ShopApiServiceImpl implements ShopApiService {
     private final AtomicLong lastPollTimestamp = new AtomicLong(0);
     private final AtomicBoolean lastPollSuccessful = new AtomicBoolean(false);
     private final AtomicReference<String> lastErrorMessage = new AtomicReference<>("");
-    // Последняя ошибка, которую реально напечатали в консоль — чтобы не
-    // спамить одним и тем же WARNING каждый цикл опроса (напр. неверный
-    // ключ/незаполненный shopId: ошибка не меняется, значит и повторный
-    // лог не несёт новой информации). Печатаем заново только когда текст
-    // ошибки меняется или когда опрос восстанавливается после сбоя.
     private final AtomicReference<String> lastLoggedError = new AtomicReference<>(null);
 
     public ShopApiServiceImpl(Plugin plugin, ConfigService configService, CartService cartService, ShopApiClient client) {
@@ -97,9 +92,6 @@ public final class ShopApiServiceImpl implements ShopApiService {
         }
     }
 
-    // Печатает WARNING только если текст ошибки отличается от последнего
-    // залогированного — иначе один и тот же сбой (напр. незаполненный
-    // shopId/ключ) заливал бы консоль каждые несколько секунд бесконечно.
     private void logErrorOnce(String message, Exception exception) {
         if (message.equals(lastLoggedError.get())) {
             return;

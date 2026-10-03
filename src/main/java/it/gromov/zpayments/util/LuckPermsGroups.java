@@ -8,13 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-// Чтение групп игрока из LuckPerms. Через рефлексию — чтобы плагин не тянул
-// API LuckPerms при сборке и работал с обеими версиями (v4 и v5). Если LuckPerms
-// не установлен, всё тихо отключается: доплата «Умная» просто не получит данные.
 public final class LuckPermsGroups {
 
     private static final String GROUP_PREFIX = "group.";
@@ -33,7 +31,6 @@ public final class LuckPermsGroups {
         return resolveApi() != null;
     }
 
-    // Вызывать ТОЛЬКО с async-потока: loadUser() может ждать загрузку из БД LuckPerms.
     public List<String> groupsOf(UUID uuid) throws Exception {
         Object currentApi = resolveApi();
         if (currentApi == null) {
@@ -66,6 +63,20 @@ public final class LuckPermsGroups {
             groups.add(key.substring(GROUP_PREFIX.length()));
         }
         return groups;
+    }
+
+    public UUID uuidOf(String name) throws Exception {
+        Object currentApi = resolveApi();
+        if (currentApi == null || !v5) {
+            return null;
+        }
+        Object userManager = invoke(currentApi, "getUserManager");
+        Object future = invoke(userManager, "lookupUniqueId", name);
+        Object found = ((Future<?>) future).get(LOAD_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+        if (!(found instanceof Optional) || !((Optional<?>) found).isPresent()) {
+            return null;
+        }
+        return (UUID) ((Optional<?>) found).get();
     }
 
     private synchronized Object resolveApi() {

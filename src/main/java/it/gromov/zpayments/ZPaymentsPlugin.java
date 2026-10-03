@@ -3,8 +3,8 @@ package it.gromov.zpayments;
 import it.gromov.zpayments.api.ZPaymentsAPI;
 import it.gromov.zpayments.http.ShopApiClient;
 import it.gromov.zpayments.listener.MenuClickListener;
-import it.gromov.zpayments.listener.PlayerGroupsListener;
 import it.gromov.zpayments.listener.PlayerJoinListener;
+import it.gromov.zpayments.util.PlayerLookupService;
 import it.gromov.zpayments.service.CartService;
 import it.gromov.zpayments.service.CommandService;
 import it.gromov.zpayments.service.ConfigService;
@@ -35,6 +35,7 @@ public final class ZPaymentsPlugin extends JavaPlugin {
     private ShopApiService shopApiService;
     private CommandService commandService;
     private UpdateService updateService;
+    private PlayerLookupService lookupService;
 
     @Override
     public void onEnable() {
@@ -73,7 +74,8 @@ public final class ZPaymentsPlugin extends JavaPlugin {
         updateService.enable();
 
         getServer().getPluginManager().registerEvents(new PlayerJoinListener(this, cartService), this);
-        getServer().getPluginManager().registerEvents(new PlayerGroupsListener(this, shopApiClient), this);
+        lookupService = new PlayerLookupService(this, shopApiClient);
+        lookupService.start();
         getServer().getPluginManager().registerEvents(new MenuClickListener(configService, messageService, cartService), this);
 
         ZPaymentsAPI.init(cartService);
@@ -92,6 +94,8 @@ public final class ZPaymentsPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         ZPaymentsAPI.shutdown();
+
+        if (lookupService != null) lookupService.stop();
 
         if (updateService != null) updateService.disable();
         if (commandService != null) commandService.disable();
